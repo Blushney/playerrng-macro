@@ -8,6 +8,7 @@
 - Exctract the .zip file
 
 - Go to the file's directory
+- add a "Screenshot" folder
 - **Right click** on Run.ahk > Edit with Notepad
 
 FROM THERE, listen carefully : 
