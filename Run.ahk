@@ -2,7 +2,7 @@
 
 Loop
 {
-    Sleep, 2000
+    Sleep, 250
     Loop
     {
         CoordMode, Pixel, Window
@@ -11,6 +11,7 @@ Loop
 
         If (!ErrorLevel)
         {
+    	    Sleep, 1000
             CoordMode, Pixel, Window
             PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0x0C9B2F, 0, Fast RGB
             If (!ErrorLevel)
@@ -73,22 +74,6 @@ Loop
                 else
                 {
                     SendMessageToDiscordWebhook("New Player Rolled, Rarity (Epic) <@your id>")
-                }
-                Break
-            }
-
-            PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0xE900E6, 0, Fast RGB
-            If (!ErrorLevel)
-            {
-                screenshotFile := CaptureScreenshot()
-                if (screenshotFile = "")
-                {
-                    MsgBox, % "Failed to capture screenshot."
-                    Break
-                }
-                else
-                {
-                    SendMessageToDiscordWebhook("New Player Rolled, Rarity (MYTHIC) <@your id>")
                 }
                 Break
             }
