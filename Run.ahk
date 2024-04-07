@@ -77,6 +77,22 @@ Loop
                 Break
             }
 
+            PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0xE900E6, 0, Fast RGB
+            If (!ErrorLevel)
+            {
+                screenshotFile := CaptureScreenshot()
+                if (screenshotFile = "")
+                {
+                    MsgBox, % "Failed to capture screenshot."
+                    Break
+                }
+                else
+                {
+                    SendMessageToDiscordWebhook("New Player Rolled, Rarity (MYTHIC) <@your id>")
+                }
+                Break
+            }
+
         }
     }
 }
