@@ -10,12 +10,12 @@ Gui, Add, Button, x120 y100 w100 h30 gStopButton, Stop
 
 Gui, Show, w420 h140, Discord Webhook Configuration
 
-LoadConfiguration() ; Load configuration when the GUI is shown
+LoadConfiguration()
 
 return
 
 GuiClose:
-    SaveConfiguration() ; Save configuration when the GUI is closed
+    SaveConfiguration()
     ExitApp
 
 StartButton:
@@ -151,8 +151,8 @@ SendMessageToDiscordWebhook(message) {
         return
     }
 
-    ; Format the message with the ping ID
-    formattedMessage := StrReplace(message, "%pingID%", "<@!" . pingID . ">")
+
+formattedMessage := StrReplace(message, "%pingID%", "<@!" . pingID . ">")
 
     objParam := {file: [screenshotFile], content: formattedMessage}
     CreateFormData(PostData, hdr_ContentType, objParam)
@@ -174,7 +174,6 @@ LoadConfiguration() {
     FileReadLine, pingID, %A_ScriptDir%\config.txt, 2
     FileReadLine, screenshotPath, %A_ScriptDir%\config.txt, 3
     
-    ; Check if any of the configuration lines are empty
     if (webhookLink = "" or pingID = "" or screenshotPath = "") {
         MsgBox, Configuration file is incomplete.
         return
@@ -190,7 +189,6 @@ SaveConfiguration() {
     GuiControlGet, pingID, , PingID
     GuiControlGet, screenshotPath, , ScreenshotPath
     
-    ; Only save configuration if all fields are filled
     if (webhookLink != "" && pingID != "" && screenshotPath != "") {
         FileDelete, %A_ScriptDir%\config.txt
         FileAppend, %webhookLink%, %A_ScriptDir%\config.txt
