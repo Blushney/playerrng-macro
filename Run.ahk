@@ -1,17 +1,42 @@
+#Persistent
+#SingleInstance, Force
 #Include, CaptureScreen.ahk
 
-Loop
-{
-    Sleep, 250
+Gui, Add, Edit, x10 y10 w400 h20 vWebhookLink, Enter Webhook Link Here
+Gui, Add, Edit, x10 y40 w400 h20 vPingID, Enter Discord ID for Ping
+Gui, Add, Edit, x10 y70 w400 h20 vScreenshotPath, Enter Screenshot Path
+Gui, Add, Button, x10 y100 w100 h30 gStartButton, Start
+Gui, Add, Button, x120 y100 w100 h30 gStopButton, Stop
+
+Gui, Show, w420 h140, Discord Webhook Configuration
+
+LoadConfiguration() ; Load configuration when the GUI is shown
+
+return
+
+GuiClose:
+    SaveConfiguration() ; Save configuration when the GUI is closed
+    ExitApp
+
+StartButton:
+    Gui, Submit, NoHide
+    SetTimer, CheckPixels, 250
+    return
+
+StopButton:
+    SetTimer, CheckPixels, Off
+    return
+
+CheckPixels:
+    CoordMode, Pixel, Window
+    
     Loop
     {
-        CoordMode, Pixel, Window
-        
         PixelSearch, Px1, Py1, 0, 0, 1920, 1080, 0x00A6FF, 0, Fast RGB
 
         If (!ErrorLevel)
         {
-    	    Sleep, 1000
+            Sleep, 1000
             CoordMode, Pixel, Window
             PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0x0C9B2F, 0, Fast RGB
             If (!ErrorLevel)
@@ -25,6 +50,7 @@ Loop
                 else
                 {
                     SendMessageToDiscordWebhook("New Player Rolled, Rarity (Uncommon)")
+                    FileDelete, %screenshotFile%
                 }
                 Break
             }
@@ -40,12 +66,13 @@ Loop
                 }
                 else
                 {
-                    SendMessageToDiscordWebhook("New Player Rolled, Rarity (Rare <@your id>)")
+                    SendMessageToDiscordWebhook("New Player Rolled, Rarity (Rare)")
+                    FileDelete, %screenshotFile%
                 }
                 Break
             }
 
-	            CoordMode, Pixel, Window
+            CoordMode, Pixel, Window
             PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0xEC9E01, 0, Fast RGB
             If (!ErrorLevel)
             {
@@ -57,7 +84,8 @@ Loop
                 }
                 else
                 {
-                    SendMessageToDiscordWebhook("New Player Rolled, Rarity (Legendary) <@your id>")
+                    SendMessageToDiscordWebhook("New Player Rolled, Rarity (Legendary)")
+                    FileDelete, %screenshotFile%
                 }
                 Break
             }
@@ -73,12 +101,13 @@ Loop
                 }
                 else
                 {
-                    SendMessageToDiscordWebhook("New Player Rolled, Rarity (Epic) <@your id>")
+                    SendMessageToDiscordWebhook("New Player Rolled, Rarity (Epic)")
+                    FileDelete, %screenshotFile%
                 }
                 Break
             }
 
-	    PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0xE900E6, 0, Fast RGB
+            PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0xE900E6, 0, Fast RGB
             If (!ErrorLevel)
             {
                 screenshotFile := CaptureScreenshot()
@@ -89,46 +118,47 @@ Loop
                 }
                 else
                 {
-                    SendMessageToDiscordWebhook("New Player Rolled, Rarity (MYTHIC) <@your id>")
+                    SendMessageToDiscordWebhook("New Player Rolled, Rarity (MYTHIC)")
+                    FileDelete, %screenshotFile%
                 }
                 Break
             }
-
         }
     }
-}
-
-
-#Include, CaptureScreen.ahk 
-
+return
 
 CaptureScreenshot() {
-    screenshotPath := "your_installation_folder"
+    GuiControlGet, screenshotPath, , ScreenshotPath
     if !FileExist(screenshotPath)
     {
         MsgBox, % "Directory does not exist: " . screenshotPath
         return ""
     }
     
-    screenshotFile := screenshotPath . A_Now . ".png"
+    screenshotFile := screenshotPath . "\" . A_Now . ".png"
 
     CaptureScreen("743, 341, 1200, 693", false, screenshotFile)
     return screenshotFile
 }
 
 SendMessageToDiscordWebhook(message) {
+    GuiControlGet, webhookLink, , WebhookLink
+    GuiControlGet, pingID, , PingID
     screenshotFile := CaptureScreenshot()
     if (screenshotFile = "")
     {
         MsgBox, % "Failed to capture screenshot."
         return
     }
-    
-    objParam := {file: [screenshotFile], content: message}
+
+    ; Format the message with the ping ID
+    formattedMessage := StrReplace(message, "%pingID%", "<@!" . pingID . ">")
+
+    objParam := {file: [screenshotFile], content: formattedMessage}
     CreateFormData(PostData, hdr_ContentType, objParam)
 
     HTTP := ComObjCreate("WinHTTP.WinHTTPRequest.5.1")
-    HTTP.Open("POST", "your_webhook_url", true)
+    HTTP.Open("POST", webhookLink, true)
     HTTP.SetRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko")
     HTTP.SetRequestHeader("Content-Type", hdr_ContentType)
     HTTP.SetRequestHeader("Pragma", "no-cache")
@@ -137,6 +167,38 @@ SendMessageToDiscordWebhook(message) {
     HTTP.Send(PostData)
     HTTP.WaitForResponse()
 }
+
+
+LoadConfiguration() {
+    FileReadLine, webhookLink, %A_ScriptDir%\config.txt, 1
+    FileReadLine, pingID, %A_ScriptDir%\config.txt, 2
+    FileReadLine, screenshotPath, %A_ScriptDir%\config.txt, 3
+    
+    ; Check if any of the configuration lines are empty
+    if (webhookLink = "" or pingID = "" or screenshotPath = "") {
+        MsgBox, Configuration file is incomplete.
+        return
+    }
+    
+    GuiControl,, WebhookLink, %webhookLink%
+    GuiControl,, PingID, %pingID%
+    GuiControl,, ScreenshotPath, %screenshotPath%
+}
+
+SaveConfiguration() {
+    GuiControlGet, webhookLink, , WebhookLink
+    GuiControlGet, pingID, , PingID
+    GuiControlGet, screenshotPath, , ScreenshotPath
+    
+    ; Only save configuration if all fields are filled
+    if (webhookLink != "" && pingID != "" && screenshotPath != "") {
+        FileDelete, %A_ScriptDir%\config.txt
+        FileAppend, %webhookLink%, %A_ScriptDir%\config.txt
+        FileAppend, % "`n" . pingID, %A_ScriptDir%\config.txt
+        FileAppend, % "`n" . screenshotPath, %A_ScriptDir%\config.txt
+    }
+}
+
 
 CreateFormData(ByRef retData, ByRef retHeader, objParam) {
     New CreateFormData(retData, retHeader, objParam)
