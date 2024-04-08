@@ -14,6 +14,6 @@
 
  FROM THERE, Fill up all the boxes!
 
-**IF YOU GET ANY ERRORS, SEND ME IN DMS/REPLY TO THIS MESSAGE WITH A SCREEN OF YOUR ERROR**
+**IF YOU GET ANY ERRORS, SEND ME IN DM's on discord (blushney) TO THIS MESSAGE WITH A SCREEN OF YOUR ERROR**
 
 if you've done everything normally, go to roblox and check your discord for messages! (must put autoroll/autoclick)
