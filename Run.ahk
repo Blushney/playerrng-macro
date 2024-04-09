@@ -36,7 +36,6 @@ CheckPixels:
     GuiControlGet, rarityNumber, , RarityNumber
     
     If (rarityNumber < 1) {
-        ; If the configured rarity number is less than 1, do not perform pixel detection
         return
     }
     
