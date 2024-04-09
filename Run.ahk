@@ -35,11 +35,6 @@ CheckPixels:
     
     GuiControlGet, rarityNumber, , RarityNumber
     
-    If (rarityNumber < 0) {
-        ; If the configured rarity number is less than 1, do not perform pixel detection
-        return
-    }
-    
     Loop
     {
         PixelSearch, Px1, Py1, 0, 0, 1920, 1080, 0x00A6FF, 0, Fast RGB
