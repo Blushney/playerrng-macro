@@ -36,6 +36,7 @@ CheckPixels:
     GuiControlGet, rarityNumber, , RarityNumber
     
     If (rarityNumber < 1) {
+        ; If the configured rarity number is less than 1, do not perform pixel detection
         return
     }
     
@@ -116,8 +117,7 @@ CheckPixels:
 
         	       If (ErrorLevel)
        	 	       {
-                       SendMessageToDiscordWebhook("Disconnected, Reconnecting")
-                       ClickSpam(1047, 592, 5000)
+                       ClickSpam(1047, 592, 100)
                     If (EnableSettings = "1") {
                         Sleep, 25000 
                         Click 1045, 987
