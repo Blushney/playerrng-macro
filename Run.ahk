@@ -113,6 +113,8 @@ If (EnableAuto = "1") {
            PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0x393B3D, 0, Fast RGB
            If (!ErrorLevel)
            {
+
+	       Sleep, 2000
                PixelSearch, Px1, Py1, 0, 0, 1920, 1080, 0x00A6FF, 0, Fast RGB
 
                If (ErrorLevel)
@@ -124,7 +126,7 @@ If (EnableAuto = "1") {
                {
                     ClickSpam(1047, 592, 100)
                     If (EnableSettings = "1") {
-                        Sleep, 25000 
+                        Sleep, 25000
                         Click 1045, 987
 			Sleep, 50
 			Click, 873, 993
