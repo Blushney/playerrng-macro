@@ -1,5 +1,12 @@
 # Blushney's Player RNG Macro 1.0.0
 
+# FEATURES :
+
+- 🤖 Webhook to see what you rolled (rares only)
+- 🔁 Auto-Reconnect
+- ⚙️ **AUTO ENABLE SETTINGS AFTER RECONNECT**
+- 👀 **RARITY FILTER**
+
 ## Tutorial:
 
 - Download [autohotkey](https://www.autohotkey.com/download/ahk-install.exe)
@@ -24,6 +31,6 @@ if you've done everything normally, go to roblox and check your discord for mess
 - Your screen must be 1920x1080 for it to work properly (fixes coming soon)
 - YOU MUST CLOSE CHAT AND NOT TAB OUT FOR IT TO WORK PROPERLY AND NOT TAKE RANDOM SCREENSHOTS!!
 
-RARITY FILTER FOR WEBHOOK : 
+**RARITY FILTER FOR WEBHOOK : **
 
 1 = uncommon, 2 = rare, 3 = epic, 4 = legendary, 5 = mythic
