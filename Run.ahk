@@ -5,10 +5,13 @@
 Gui, Add, Edit, x10 y10 w400 h20 vWebhookLink, Enter Webhook Link Here
 Gui, Add, Edit, x10 y40 w400 h20 vPingID, Enter Discord ID for Ping
 Gui, Add, Edit, x10 y70 w400 h20 vScreenshotPath, Enter Screenshot Path
-Gui, Add, Button, x10 y100 w100 h30 gStartButton, Start
-Gui, Add, Button, x120 y100 w100 h30 gStopButton, Stop
+Gui, Add, Edit, x10 y100 w400 h20 vRarityNumber, Enter Rarity Number (1 = uncommon, 2 = rare, 3 = epic, 4 = legendary, 5 = mythic)
+Gui, Add, Button, x10 y200 w100 h30 gStartButton, Start
+Gui, Add, Button, x120 y200 w100 h30 gStopButton, Stop
+Gui, Add, Checkbox, x10 y130 w200 h20 vEnableAuto, Toggle Auto-Reconnect
+Gui, Add, Checkbox, x10 y150 w200 h40 vEnableSettings, Toggle only if you want to autoroll again after reconnect
 
-Gui, Show, w420 h140, Discord Webhook Configuration
+Gui, Show, w420 h250, Blushney's PLAYER RNG Macro
 
 LoadConfiguration()
 
@@ -30,6 +33,13 @@ StopButton:
 CheckPixels:
     CoordMode, Pixel, Window
     
+    GuiControlGet, rarityNumber, , RarityNumber
+    
+    If (rarityNumber < 1) {
+        ; If the configured rarity number is less than 1, do not perform pixel detection
+        return
+    }
+    
     Loop
     {
         PixelSearch, Px1, Py1, 0, 0, 1920, 1080, 0x00A6FF, 0, Fast RGB
@@ -41,91 +51,147 @@ CheckPixels:
             PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0x0C9B2F, 0, Fast RGB
             If (!ErrorLevel)
             {
-                screenshotFile := CaptureScreenshot()
-                if (screenshotFile = "")
-                {
-                    MsgBox, % "Failed to capture screenshot."
-                    Break
-                }
-                else
-                {
-                    SendMessageToDiscordWebhook("New Player Rolled, Rarity (Uncommon)")
-                    FileDelete, %screenshotFile%
-                }
+	     	If (rarityNumber <= 1)
+		{
+                SendMessageToDiscordWebhook("New Player Rolled, Rarity (Uncommon)")
                 Break
+		}
             }
             CoordMode, Pixel, Window
             PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0x0082E4, 0, Fast RGB
             If (!ErrorLevel)
             {
-                screenshotFile := CaptureScreenshot()
-                if (screenshotFile = "")
-                {
-                    MsgBox, % "Failed to capture screenshot."
-                    Break
-                }
-                else
-                {
-                    SendMessageToDiscordWebhook("New Player Rolled, Rarity (Rare)")
-                    FileDelete, %screenshotFile%
-                }
+		If (rarityNumber <= 2)
+		{
+                SendMessageToDiscordWebhook("New Player Rolled, Rarity (Rare)")
                 Break
+		}
             }
 
             CoordMode, Pixel, Window
             PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0xEC9E01, 0, Fast RGB
             If (!ErrorLevel)
             {
-                screenshotFile := CaptureScreenshot()
-                if (screenshotFile = "")
-                {
-                    MsgBox, % "Failed to capture screenshot."
-                    Break
-                }
-                else
-                {
-                    SendMessageToDiscordWebhook("New Player Rolled, Rarity (Legendary)")
-                    FileDelete, %screenshotFile%
-                }
+	     	If (rarityNumber <= 4)
+		{
+                SendMessageToDiscordWebhook("New Player Rolled, Rarity (Legendary)")
                 Break
+		}
             }
 
             PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0x8A01E0, 0, Fast RGB
             If (!ErrorLevel)
             {
-                screenshotFile := CaptureScreenshot()
-                if (screenshotFile = "")
-                {
-                    MsgBox, % "Failed to capture screenshot."
-                    Break
-                }
-                else
-                {
-                    SendMessageToDiscordWebhook("New Player Rolled, Rarity (Epic)")
-                    FileDelete, %screenshotFile%
-                }
+	     	If (rarityNumber <= 3)
+		{
+                SendMessageToDiscordWebhook("New Player Rolled, Rarity (Epic)")
                 Break
+		}
             }
 
             PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0xE900E6, 0, Fast RGB
             If (!ErrorLevel)
             {
-                screenshotFile := CaptureScreenshot()
-                if (screenshotFile = "")
-                {
-                    MsgBox, % "Failed to capture screenshot."
-                    Break
-                }
-                else
-                {
-                    SendMessageToDiscordWebhook("New Player Rolled, Rarity (MYTHIC)")
-                    FileDelete, %screenshotFile%
-                }
+	     	If (rarityNumber <= 5)
+		{
+                SendMessageToDiscordWebhook("New Player Rolled, Rarity (MYTHIC)")
                 Break
+		}
+            }
+	    }
+
+	    GuiControlGet, EnableAuto, , EnableAuto
+            GuiControlGet, EnableSettings, , EnableSettings
+
+            If (EnableAuto = "1") {
+                PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0xFFFFFF, 0, Fast RGB
+                If (!ErrorLevel)
+                {
+                   PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0xA0A2A2, 0, Fast RGB
+                   If (!ErrorLevel)
+		   {
+                   PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0x393B3D, 0, Fast RGB
+                   If (!ErrorLevel)
+		   {
+        	       PixelSearch, Px1, Py1, 0, 0, 1920, 1080, 0x00A6FF, 0, Fast RGB
+
+        	       If (ErrorLevel)
+       	 	       {
+                       SendMessageToDiscordWebhook("Disconnected, Reconnecting")
+                       ClickSpam(1047, 592, 5000)
+                    If (EnableSettings = "1") {
+                        Sleep, 25000 
+                        Click 1045, 987
+			Sleep, 50
+			Click, 873, 993
+			If (rarityNumber = 1)
+			{
+			Click, 865, 694
+			}
+			If (rarityNumber = 2)
+			{
+			Click, 865, 684
+			Sleep, 50
+			Click, 865, 729
+			}
+			If (rarityNumber = 3)
+			{
+			Click, 865, 684
+			Sleep, 50
+			Click, 865, 729
+			Sleep, 50
+			Click, 865, 790
+			}
+			If (rarityNumber = 4)
+			{
+			Click, 865, 684
+			Sleep, 50
+			Click, 865, 729
+			Sleep, 50
+			Click, 865, 790
+			Sleep, 50
+			Click, 865, 827
+			}
+			If (rarityNumber = 5)
+			{
+			Click, 865, 684
+			Sleep, 50
+			Click, 865, 729
+			Sleep, 50
+			Click, 865, 790
+			Sleep, 50
+			Click, 865, 827
+			Sleep, 50
+			Click, 865, 885
+			}
+                        Sleep, 50
+                        Click 822, 615
+                        Sleep, 50
+                        Click 957, 920
+                    }
+                    Break
+                	}
+			}
+		    }
             }
         }
     }
+
 return
+
+ClickSpam(x, y, duration) {
+    MouseGetPos, OriginalX, OriginalY
+    
+    EndTime := A_TickCount + duration
+    While (A_TickCount < EndTime) {
+        Click %x%, %y%
+        Sleep, 50
+    }
+    
+    ; Restore the original mouse coordinates
+    MouseMove, OriginalX, OriginalY
+}
+
 
 CaptureScreenshot() {
     GuiControlGet, screenshotPath, , ScreenshotPath
@@ -144,6 +210,7 @@ CaptureScreenshot() {
 SendMessageToDiscordWebhook(message) {
     GuiControlGet, webhookLink, , WebhookLink
     GuiControlGet, pingID, , PingID
+    GuiControlGet, rarityNumber, , RarityNumber
     screenshotFile := CaptureScreenshot()
     if (screenshotFile = "")
     {
@@ -151,30 +218,40 @@ SendMessageToDiscordWebhook(message) {
         return
     }
 
+    ; Check if the rolled rarity is equal to or higher than the configured rarity number
+    if (InStr(message, "Uncommon") && rarityNumber >= 1) ||
+       (InStr(message, "Rare") && rarityNumber >= 2) ||
+       (InStr(message, "Legendary") && rarityNumber >= 3) ||
+       (InStr(message, "Epic") && rarityNumber >= 4) ||
+       (InStr(message, "MYTHIC") && rarityNumber >= 5)
+    {
+        objParam := {file: [screenshotFile], content: message}
+        CreateFormData(PostData, hdr_ContentType, objParam)
 
-formattedMessage := StrReplace(message, "%pingID%", "<@!" . pingID . ">")
+        HTTP := ComObjCreate("WinHTTP.WinHTTPRequest.5.1")
+        HTTP.Open("POST", webhookLink, true)
+        HTTP.SetRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko")
+        HTTP.SetRequestHeader("Content-Type", hdr_ContentType)
+        HTTP.SetRequestHeader("Pragma", "no-cache")
+        HTTP.SetRequestHeader("Cache-Control", "no-cache, no-store")
+        HTTP.SetRequestHeader("If-Modified-Since", "Sat, 1 Jan 2000 00:00:00 GMT")
+        HTTP.Send(PostData)
+        HTTP.WaitForResponse()
 
-    objParam := {file: [screenshotFile], content: formattedMessage}
-    CreateFormData(PostData, hdr_ContentType, objParam)
-
-    HTTP := ComObjCreate("WinHTTP.WinHTTPRequest.5.1")
-    HTTP.Open("POST", webhookLink, true)
-    HTTP.SetRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko")
-    HTTP.SetRequestHeader("Content-Type", hdr_ContentType)
-    HTTP.SetRequestHeader("Pragma", "no-cache")
-    HTTP.SetRequestHeader("Cache-Control", "no-cache, no-store")
-    HTTP.SetRequestHeader("If-Modified-Since", "Sat, 1 Jan 2000 00:00:00 GMT")
-    HTTP.Send(PostData)
-    HTTP.WaitForResponse()
+        FileDelete, %screenshotFile%
+    }
 }
-
 
 LoadConfiguration() {
     FileReadLine, webhookLink, %A_ScriptDir%\config.txt, 1
     FileReadLine, pingID, %A_ScriptDir%\config.txt, 2
     FileReadLine, screenshotPath, %A_ScriptDir%\config.txt, 3
+    FileReadLine, rarityNumber, %A_ScriptDir%\config.txt, 4
+    FileReadLine, EnableAuto, %A_ScriptDir%\config.txt, 5
+    FileReadLine, EnableSettings, %A_ScriptDir%\config.txt, 6
     
-    if (webhookLink = "" or pingID = "" or screenshotPath = "") {
+    ; Check if any of the configuration lines are empty
+    if (webhookLink = "" or pingID = "" or screenshotPath = "" or rarityNumber = "" or EnableAuto = "" or EnableSettings = "") {
         MsgBox, Configuration file is incomplete.
         return
     }
@@ -182,20 +259,32 @@ LoadConfiguration() {
     GuiControl,, WebhookLink, %webhookLink%
     GuiControl,, PingID, %pingID%
     GuiControl,, ScreenshotPath, %screenshotPath%
+    GuiControl,, RarityNumber, %rarityNumber%
+    GuiControl,, EnableAuto, %EnableAuto%
+    GuiControl,, EnableSettings, %EnableSettings%
 }
+
 
 SaveConfiguration() {
     GuiControlGet, webhookLink, , WebhookLink
     GuiControlGet, pingID, , PingID
     GuiControlGet, screenshotPath, , ScreenshotPath
+    GuiControlGet, rarityNumber, , RarityNumber
+    GuiControlGet, EnableAuto, , EnableAuto
+    GuiControlGet, EnableSettings, , EnableSettings
     
-    if (webhookLink != "" && pingID != "" && screenshotPath != "") {
+    ; Only save configuration if all fields are filled
+    if (webhookLink != "" && pingID != "" && screenshotPath != "" && rarityNumber != "") {
         FileDelete, %A_ScriptDir%\config.txt
         FileAppend, %webhookLink%, %A_ScriptDir%\config.txt
         FileAppend, % "`n" . pingID, %A_ScriptDir%\config.txt
         FileAppend, % "`n" . screenshotPath, %A_ScriptDir%\config.txt
+        FileAppend, % "`n" . rarityNumber, %A_ScriptDir%\config.txt
+        FileAppend, % "`n" . EnableAuto, %A_ScriptDir%\config.txt
+        FileAppend, % "`n" . EnableSettings, %A_ScriptDir%\config.txt
     }
 }
+
 
 
 CreateFormData(ByRef retData, ByRef retHeader, objParam) {
