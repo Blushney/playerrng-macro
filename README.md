@@ -33,4 +33,4 @@ if you've done everything normally, go to roblox and check your discord for mess
 
 **RARITY FILTER FOR WEBHOOK : **
 
-0 = uncommon, 1 = rare, 2 = epic, 3 = legendary, 4 = mythic
+-1 = uncommon, 0 = rare, 1 = epic, 2 = legendary, 3 = mythic
