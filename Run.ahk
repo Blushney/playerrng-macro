@@ -114,7 +114,7 @@ If (EnableAuto = "1") {
            If (!ErrorLevel)
            {
 
-	       Sleep, 2000
+	       Sleep, 5000
                PixelSearch, Px1, Py1, 0, 0, 1920, 1080, 0x00A6FF, 0, Fast RGB
 
                If (ErrorLevel)
