@@ -104,17 +104,21 @@ CheckPixels:
             GuiControlGet, EnableSettings, , EnableSettings
 
 If (EnableAuto = "1") {
+    CoordMode, Pixel, Window
     PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0xFFFFFF, 0, Fast RGB
     If (!ErrorLevel)
     {
        PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0xA0A2A2, 0, Fast RGB
        If (!ErrorLevel)
        {
+
+	   Sleep, 5000
+
            PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0x393B3D, 0, Fast RGB
            If (!ErrorLevel)
            {
 
-	       Sleep, 5000
+	       Sleep, 2500
                PixelSearch, Px1, Py1, 0, 0, 1920, 1080, 0x00A6FF, 0, Fast RGB
 
                If (ErrorLevel)
@@ -124,6 +128,11 @@ If (EnableAuto = "1") {
 
                If (ErrorLevel)
                {
+
+           PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0xBCBDBD, 0, Fast RGB
+           If (!ErrorLevel)
+           {
+
                     ClickSpam(1047, 592, 100)
                     If (EnableSettings = "1") {
                         Sleep, 25000
@@ -178,6 +187,7 @@ If (EnableAuto = "1") {
                     Break
                 	}
 			}
+}
 		    }
 		}
             }
