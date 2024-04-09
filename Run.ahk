@@ -103,21 +103,26 @@ CheckPixels:
 	    GuiControlGet, EnableAuto, , EnableAuto
             GuiControlGet, EnableSettings, , EnableSettings
 
-            If (EnableAuto = "1") {
-                PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0xFFFFFF, 0, Fast RGB
-                If (!ErrorLevel)
-                {
-                   PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0xA0A2A2, 0, Fast RGB
-                   If (!ErrorLevel)
-		   {
-                   PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0x393B3D, 0, Fast RGB
-                   If (!ErrorLevel)
-		   {
-        	       PixelSearch, Px1, Py1, 0, 0, 1920, 1080, 0x00A6FF, 0, Fast RGB
+If (EnableAuto = "1") {
+    PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0xFFFFFF, 0, Fast RGB
+    If (!ErrorLevel)
+    {
+       PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0xA0A2A2, 0, Fast RGB
+       If (!ErrorLevel)
+       {
+           PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0x393B3D, 0, Fast RGB
+           If (!ErrorLevel)
+           {
+               PixelSearch, Px1, Py1, 0, 0, 1920, 1080, 0x00A6FF, 0, Fast RGB
 
-        	       If (ErrorLevel)
-       	 	       {
-                       ClickSpam(1047, 592, 100)
+               If (ErrorLevel)
+               {
+
+               PixelSearch, Px1, Py1, 0, 0, 1920, 1080, 0xCDB58B, 0, Fast RGB
+
+               If (ErrorLevel)
+               {
+                    ClickSpam(1047, 592, 100)
                     If (EnableSettings = "1") {
                         Sleep, 25000 
                         Click 1045, 987
@@ -172,6 +177,7 @@ CheckPixels:
                 	}
 			}
 		    }
+		}
             }
         }
     }
