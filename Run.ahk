@@ -35,7 +35,7 @@ CheckPixels:
     
     GuiControlGet, rarityNumber, , RarityNumber
     
-    If (rarityNumber < 1) {
+    If (rarityNumber < 0) {
         ; If the configured rarity number is less than 1, do not perform pixel detection
         return
     }
@@ -51,7 +51,7 @@ CheckPixels:
             PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0x0C9B2F, 0, Fast RGB
             If (!ErrorLevel)
             {
-	     	If (rarityNumber <= 1)
+	     	If (rarityNumber <= 0)
 		{
                 SendMessageToDiscordWebhook("New Player Rolled, Rarity (Uncommon)")
                 Break
@@ -61,7 +61,7 @@ CheckPixels:
             PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0x0082E4, 0, Fast RGB
             If (!ErrorLevel)
             {
-		If (rarityNumber <= 2)
+		If (rarityNumber <= 1)
 		{
                 SendMessageToDiscordWebhook("New Player Rolled, Rarity (Rare)")
                 Break
@@ -72,7 +72,7 @@ CheckPixels:
             PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0xEC9E01, 0, Fast RGB
             If (!ErrorLevel)
             {
-	     	If (rarityNumber <= 4)
+	     	If (rarityNumber <= 3)
 		{
                 SendMessageToDiscordWebhook("New Player Rolled, Rarity (Legendary)")
                 Break
@@ -82,7 +82,7 @@ CheckPixels:
             PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0x8A01E0, 0, Fast RGB
             If (!ErrorLevel)
             {
-	     	If (rarityNumber <= 3)
+	     	If (rarityNumber <= 2)
 		{
                 SendMessageToDiscordWebhook("New Player Rolled, Rarity (Epic)")
                 Break
@@ -92,7 +92,7 @@ CheckPixels:
             PixelSearch, Px2, Py2, 0, 0, 1920, 1080, 0xE900E6, 0, Fast RGB
             If (!ErrorLevel)
             {
-	     	If (rarityNumber <= 5)
+	     	If (rarityNumber <= 4)
 		{
                 SendMessageToDiscordWebhook("New Player Rolled, Rarity (MYTHIC)")
                 Break
@@ -139,17 +139,17 @@ If (EnableAuto = "1") {
                         Click 1045, 987
 			Sleep, 50
 			Click, 873, 993
-			If (rarityNumber = 1)
+			If (rarityNumber = 0)
 			{
 			Click, 865, 694
 			}
-			If (rarityNumber = 2)
+			If (rarityNumber = 1)
 			{
 			Click, 865, 684
 			Sleep, 50
 			Click, 865, 729
 			}
-			If (rarityNumber = 3)
+			If (rarityNumber = 2)
 			{
 			Click, 865, 684
 			Sleep, 50
@@ -157,7 +157,7 @@ If (EnableAuto = "1") {
 			Sleep, 50
 			Click, 865, 790
 			}
-			If (rarityNumber = 4)
+			If (rarityNumber = 3)
 			{
 			Click, 865, 684
 			Sleep, 50
@@ -167,7 +167,7 @@ If (EnableAuto = "1") {
 			Sleep, 50
 			Click, 865, 827
 			}
-			If (rarityNumber = 5)
+			If (rarityNumber = 4)
 			{
 			Click, 865, 684
 			Sleep, 50
