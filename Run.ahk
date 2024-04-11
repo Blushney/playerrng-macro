@@ -6,12 +6,14 @@ Gui, Add, Edit, x10 y10 w400 h20 vWebhookLink, Enter Webhook Link Here
 Gui, Add, Edit, x10 y40 w400 h20 vPingID, Enter Discord ID for Ping
 Gui, Add, Edit, x10 y70 w400 h20 vScreenshotPath, Enter Screenshot Path
 Gui, Add, Edit, x10 y100 w400 h20 vRarityNumber, Enter Rarity Number (1 = uncommon, 2 = rare, 3 = epic, 4 = legendary, 5 = mythic)
-Gui, Add, Button, x10 y200 w100 h30 gStartButton, Start
-Gui, Add, Button, x120 y200 w100 h30 gStopButton, Stop
+Gui, Add, Button, x10 y230 w100 h30 gStartButton, Start
+Gui, Add, Button, x120 y230 w100 h30 gStopButton, Stop (Escape)
 Gui, Add, Checkbox, x10 y130 w200 h20 vEnableAuto, Toggle Auto-Reconnect
 Gui, Add, Checkbox, x10 y150 w200 h40 vEnableSettings, Toggle only if you want to autoroll again after reconnect
+Gui, Add, Checkbox, x10 y185 w200 h40 vEnableRefresh, Refreshes every character in your inventory (disables everything else)
 
-Gui, Show, w420 h250, Blushney's PLAYER RNG Macro
+
+Gui, Show, w420 h270, Blushney's PLAYER RNG Macro
 
 LoadConfiguration()
 
@@ -23,18 +25,71 @@ GuiClose:
 
 StartButton:
     Gui, Submit, NoHide
-    SetTimer, CheckPixels, 250
+    if (EnableRefresh == 0)
+    {
+        SetTimer, CheckPixels, On
+    }
+    if (EnableRefresh == 1)
+    {
+        SetTimer, RefreshInv, On
+    }
     return
 
 StopButton:
-    SetTimer, CheckPixels, Off
+    if (EnableRefresh == 0)
+    {
+        SetTimer, CheckPixels, Off
+    }
+    if (EnableRefresh == 1)
+    {
+        SetTimer, RefreshInv, Off
+    }
     return
+
+Esc::
+    SaveConfiguration()
+    ExitApp
+return
+
+Return
+
+RefreshInv:
+CoordMode Mouse, Screen
+
+Click, 61, 509
+Click, 61, 509
+Sleep, 2000
+Click, 1026, 740
+Sleep, 5000
+Loop
+{
+    Click, 960, 472
+    Sleep, 50
+    Click, 811, 330
+    Sleep, 50
+    Click, 1184, 482
+    Sleep, 50
+    Click, 811, 330
+    Sleep, 50
+    Click, 975, 618
+    Sleep, 50
+    Click, 811, 330
+    Sleep, 50
+    Click, 1199, 619
+    Sleep, 50
+    Click, 811, 330
+    Sleep, 1000
+    Click, 1072, 611
+    Sleep, 50
+    SendInput, {WheelDown}
+    SendInput, {WheelDown}
+}
 
 CheckPixels:
     CoordMode, Pixel, Window
     
     GuiControlGet, rarityNumber, , RarityNumber
-    
+   
     Loop
     {
         PixelSearch, Px1, Py1, 0, 0, 1920, 1080, 0x00A6FF, 0, Fast RGB
@@ -230,7 +285,6 @@ SendMessageToDiscordWebhook(message) {
         return
     }
 
-    ; Check if the rolled rarity is equal to or higher than the configured rarity number
     if (InStr(message, "Uncommon") && rarityNumber >= 1) ||
        (InStr(message, "Rare") && rarityNumber >= 2) ||
        (InStr(message, "Legendary") && rarityNumber >= 3) ||
@@ -261,8 +315,8 @@ LoadConfiguration() {
     FileReadLine, rarityNumber, %A_ScriptDir%\config.txt, 4
     FileReadLine, EnableAuto, %A_ScriptDir%\config.txt, 5
     FileReadLine, EnableSettings, %A_ScriptDir%\config.txt, 6
+    FileReadLine, EnableRefresh, %A_ScriptDir%\config.txt, 7
     
-    ; Check if any of the configuration lines are empty
     if (webhookLink = "" or pingID = "" or screenshotPath = "" or rarityNumber = "" or EnableAuto = "" or EnableSettings = "") {
         MsgBox, Configuration file is incomplete.
         return
@@ -274,6 +328,7 @@ LoadConfiguration() {
     GuiControl,, RarityNumber, %rarityNumber%
     GuiControl,, EnableAuto, %EnableAuto%
     GuiControl,, EnableSettings, %EnableSettings%
+    GuiControl,, EnableRefresh, %EnableRefresh%
 }
 
 
@@ -284,8 +339,9 @@ SaveConfiguration() {
     GuiControlGet, rarityNumber, , RarityNumber
     GuiControlGet, EnableAuto, , EnableAuto
     GuiControlGet, EnableSettings, , EnableSettings
+    GuiControlGet, EnableRefresh, , EnableRefresh
+
     
-    ; Only save configuration if all fields are filled
     if (webhookLink != "" && pingID != "" && screenshotPath != "" && rarityNumber != "") {
         FileDelete, %A_ScriptDir%\config.txt
         FileAppend, %webhookLink%, %A_ScriptDir%\config.txt
@@ -294,6 +350,7 @@ SaveConfiguration() {
         FileAppend, % "`n" . rarityNumber, %A_ScriptDir%\config.txt
         FileAppend, % "`n" . EnableAuto, %A_ScriptDir%\config.txt
         FileAppend, % "`n" . EnableSettings, %A_ScriptDir%\config.txt
+        FileAppend, % "`n" . EnableRefresh, %A_ScriptDir%\config.txt
     }
 }
 
