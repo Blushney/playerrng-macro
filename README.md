@@ -6,6 +6,7 @@
 - 🔁 Auto-Reconnect
 - ⚙️ **AUTO ENABLE SETTINGS AFTER RECONNECT**
 - 👀 **RARITY FILTER**
+- 👍**AUTO REFRESH**
 
 ## Tutorial:
 
